@@ -33,6 +33,4 @@ export default function Home() {
 
             </div>
 
-        </>
-    );
-}
+export default Home;
