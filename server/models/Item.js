@@ -20,6 +20,7 @@ const itemSchema = new mongoose.Schema(
 
     imageUrl: {
       type: String,
+      default: ""
     },
 
     username: {
