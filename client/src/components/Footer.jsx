@@ -35,9 +35,9 @@ function Footer() {
             </Link>
             <Link
               className="text-sm text-white/70 hover:text-white"
-              to="/report-lost"
+              to="/register"
             >
-              Report Lost
+              Register
             </Link>
           </div>
 
@@ -56,7 +56,7 @@ function Footer() {
               Report Found Item
             </Link>
             <Link className="text-sm text-white/70 hover:text-white" to="/login">
-              Sign In
+              Login
             </Link>
           </div>
         </div>
