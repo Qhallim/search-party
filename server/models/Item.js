@@ -7,6 +7,11 @@ const itemSchema = new mongoose.Schema(
       required: true,
     },
 
+    category: {
+      type: String,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: ["Lost", "Found"],
@@ -20,7 +25,22 @@ const itemSchema = new mongoose.Schema(
 
     imageUrl: {
       type: String,
-      default: ""
+      default: "",
+    },
+
+    location: {
+      type: String,
+      required: true,
+    },
+
+    color: {
+      type: String,
+      required: true,
+    },
+
+    brand: {
+      type: String,
+      default: "",
     },
 
     username: {

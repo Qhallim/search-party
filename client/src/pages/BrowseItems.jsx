@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ListingCard from "../components/ListingCard";
 import SearchFilters from "../components/SearchFilters";
-import { listings } from "../data/mockListings";
 
 function BrowseItems() {
   const [searchParams] = useSearchParams();
@@ -13,10 +12,42 @@ function BrowseItems() {
   const [category, setCategory] = useState(startingCategory);
   const [status, setStatus] = useState("All");
 
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function fetchItems() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch("http://localhost:5000/api/items");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch items");
+      }
+
+      const data = await res.json();
+
+      setItems(data);
+
+    } catch (err) {
+      console.error("Error loading items:", err);
+      setError("Unable to load items. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+
   const filteredListings = useMemo(() => {
-    return listings.filter((item) => {
+    return items.filter((item) => {
       const searchText = `
-        ${item.title}
+        ${item.name}
         ${item.category}
         ${item.status}
         ${item.location}
@@ -26,12 +57,21 @@ function BrowseItems() {
       `.toLowerCase();
 
       const matchesSearch = searchText.includes(search.toLowerCase());
-      const matchesCategory = category === "All" || item.category === category;
-      const matchesStatus = status === "All" || item.status === status;
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      const matchesCategory =
+        category === "All" || item.category === category;
+
+      const matchesStatus =
+        status === "All" || item.status === status;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesStatus
+      );
     });
-  }, [search, category, status]);
+  }, [items, search, category, status]);
+
 
   function clearFilters() {
     setSearch("");
@@ -39,9 +79,11 @@ function BrowseItems() {
     setStatus("All");
   }
 
+
   return (
     <section className="min-h-[70vh] bg-transparent py-16">
       <div className="mx-auto max-w-7xl px-5">
+
         <div className="mb-8">
           <span className="text-sm font-bold uppercase tracking-widest text-[#5F259F]">
             Browse items
@@ -56,6 +98,7 @@ function BrowseItems() {
           </p>
         </div>
 
+
         <SearchFilters
           search={search}
           setSearch={setSearch}
@@ -66,27 +109,85 @@ function BrowseItems() {
           clearFilters={clearFilters}
         />
 
+
         <div className="mt-8 flex items-center justify-between text-sm text-gray-500">
           <p>
             Showing{" "}
             <span className="font-bold text-gray-900">
-              {filteredListings.length}
+              {loading ? "..." : filteredListings.length}
             </span>{" "}
             items
           </p>
         </div>
 
-        {filteredListings.length > 0 ? (
-          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredListings.map((item) => (
-              <ListingCard key={item.id} item={item} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-8 rounded-2xl border border-dashed border-purple-300 bg-purple-50 p-16 text-center">
-            <div className="text-5xl">🔍</div>
 
-            <h3 className="mt-5 text-2xl font-bold">No matching items found</h3>
+        {loading && (
+          <div className="mt-10 rounded-2xl bg-white p-12 text-center shadow-sm">
+            <div className="text-4xl animate-spin">
+              ⏳
+            </div>
+
+            <h3 className="mt-4 text-xl font-bold">
+              Loading items...
+            </h3>
+
+            <p className="mt-2 text-gray-600">
+              Fetching lost and found listings.
+            </p>
+          </div>
+        )}
+
+
+        {!loading && error && (
+          <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-12 text-center">
+
+            <div className="text-5xl">
+              ⚠️
+            </div>
+
+            <h3 className="mt-5 text-2xl font-bold">
+              Something went wrong
+            </h3>
+
+            <p className="mt-2 text-gray-600">
+              {error}
+            </p>
+
+            <button
+              onClick={fetchItems}
+              className="mt-6 rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white"
+            >
+              Try Again
+            </button>
+
+          </div>
+        )}
+
+
+        {!loading && !error && filteredListings.length > 0 && (
+          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+            {filteredListings.map((item) => (
+              <ListingCard
+                key={item._id}
+                item={item}
+              />
+            ))}
+
+          </div>
+        )}
+
+
+        {!loading && !error && filteredListings.length === 0 && (
+          <div className="mt-8 rounded-2xl border border-dashed border-purple-300 bg-purple-50 p-16 text-center">
+
+            <div className="text-5xl">
+              🔍
+            </div>
+
+            <h3 className="mt-5 text-2xl font-bold">
+              No matching items found
+            </h3>
 
             <p className="mt-2 text-gray-600">
               Try changing your search terms or filters.
@@ -98,8 +199,10 @@ function BrowseItems() {
             >
               Clear Filters
             </button>
+
           </div>
         )}
+
       </div>
     </section>
   );
