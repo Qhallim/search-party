@@ -21,7 +21,7 @@ function Login() {
     try {
 
       const API_URL = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${API_URL}/api/items`,
+      const res = await fetch(`${API_URL}/api/auth/login`,
         {
           method:"POST",
           headers:{
