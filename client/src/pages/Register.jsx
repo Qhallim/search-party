@@ -2,16 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import md5 from "md5";
 
-function Login() {
+function Register() {
 
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");  
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!identifier || !password) {
+    if (!email || !username || !password) {
       alert("Please fill in all fields");
       return;
     }
@@ -19,45 +20,42 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/auth/login",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-          },
-          body: JSON.stringify({
-            login: identifier,
-            password: convertToMD5(password)
-          })
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+            email, 
+            username, 
+            password : convertToMD5(password)
+        }),
+        
+      });
+      
+     const data = await res.json();
 
-      const data = await res.json();
-
-      if(data.error){
-
-        alert(data.error);
+      if (data.error) {
+        alert("Something went wrong during signup. ERROR: " + data.error);
         return;
-
       }
-
 
       localStorage.setItem("user", JSON.stringify(data));
       window.dispatchEvent(new Event("userChange"));
-      alert("Login Successful!");
+      alert("Sign Up Successful!");
       navigate("/");
     } catch (err) {
-      alert("Something went wrong" + err);
+      alert("Something went wrong "+ err);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const convertToMD5 = (value) => {
     const hash = md5(value);
     return hash;
 };
+
 
 return (
   <section className="min-h-[70vh] bg-transparent py-16">
@@ -68,23 +66,33 @@ return (
             Account
           </span>
 
-          <h1 className="mt-3 text-3xl font-bold">Log In</h1>
+          <h1 className="mt-3 text-3xl font-bold">Register</h1>
 
           <p className="mt-3 text-gray-600">
-            Login to post items, claim listings, and manage reports.
+            Sign in to post items, claim listings, and manage reports.
           </p>
         </div>
 
         <form className="mt-8 space-y-5">
+          <div>
+            <label className="font-semibold">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 outline-none focus:border-[#5F259F] focus:ring-4 focus:ring-purple-100"
+              placeholder="name@stu-mail.hunter.cuny.edu"
+            />
+          </div>
 
           <div>
-            <label className="font-semibold">Email or Username</label>
+            <label className="font-semibold">Username</label>
             <input
               type="text"
               className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 outline-none focus:border-[#5F259F] focus:ring-4 focus:ring-purple-100"
-              placeholder="Email or Username"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="Choose a username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
@@ -105,14 +113,14 @@ return (
             disabled={loading}
             className="w-full rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white transition hover:bg-[#481978] disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Signing up..." : "Register"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
           New user?{" "}
-          <Link to="/register" className="font-semibold text-[#5F259F]">
-            Register to create a post!
+          <Link to="/report-found" className="font-semibold text-[#5F259F]">
+            Post an item first
           </Link>
         </p>
       </div>
@@ -121,4 +129,4 @@ return (
 );
 }
 
-export default Login;
+export default Register;

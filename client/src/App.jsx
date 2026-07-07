@@ -6,6 +6,7 @@ import BrowseItems from "./pages/BrowseItems";
 import ReportLost from "./pages/ReportLost";
 import ReportFound from "./pages/ReportFound";
 import ItemDetails from "./pages/ItemDetails";
+import Register from "./pages/Register";
 import Login from "./pages/Login";
 import backgroundImage from "./assets/background.png";
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/items/:id" element={<ItemDetails />} />
             <Route path="/report-lost" element={<ReportLost />} />
             <Route path="/report-found" element={<ReportFound />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </main>

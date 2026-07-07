@@ -1,12 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
+
+  //For username
+  const [user, setUser] = useState(() =>
+    JSON.parse(localStorage.getItem("user"))
+  );
+  const username = user?.username;
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(JSON.parse(localStorage.getItem("user")));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("userChange", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userChange", handleStorageChange);
+    };
+  }, []);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const linkClass = ({ isActive }) =>
-    `font-medium transition ${
-      isActive ? "text-white" : "text-white/80 hover:text-white"
+    `font-medium transition ${isActive ? "text-white" : "text-white/80 hover:text-white"
     }`;
 
   return (
@@ -44,19 +64,42 @@ function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            to="/login"
-            className="rounded-lg border border-white/50 px-4 py-2 font-semibold transition hover:bg-white/10"
-          >
-            Sign In
-          </Link>
+          {username ? (
+            <div className="rounded-lg border border-white/50 px-4 py-2 font-semibold">
+              Welcome back, {username}
 
-          <Link
-            to="/report-found"
-            className="rounded-lg bg-white px-4 py-2 font-semibold text-[#5F259F] transition hover:bg-purple-50"
-          >
-            + Post Item
-          </Link>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  window.dispatchEvent(new Event("userChange"));
+                }}
+                className="ml-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#5F259F]"
+              >
+                Logout
+              </button>
+
+            </div>
+          ) : (
+
+            <>
+            
+            <Link
+              to="/register"
+              className="rounded-lg border border-white/50 px-4 py-2 font-semibold transition hover:bg-white/10"
+            >
+              Register
+            </Link>
+            
+            <Link
+              to="/login"
+              className="rounded-lg border border-white/50 px-4 py-2 font-semibold transition hover:bg-white/10"
+            >
+              Login
+            </Link>
+            </>
+            
+
+          )}
         </div>
 
         <button
@@ -83,8 +126,8 @@ function Navbar() {
             <Link onClick={() => setMenuOpen(false)} to="/report-found">
               Report Found
             </Link>
-            <Link onClick={() => setMenuOpen(false)} to="/login">
-              Sign In
+            <Link onClick={() => setMenuOpen(false)} to="/register">
+              Register
             </Link>
           </nav>
         </div>
