@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -12,7 +12,7 @@ import backgroundImage from "./assets/background.png";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div
         className="min-h-screen bg-cover bg-center bg-fixed bg-no-repeat text-gray-900"
         style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -33,7 +33,7 @@ function App() {
 
         <Footer />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
