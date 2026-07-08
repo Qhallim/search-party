@@ -10,6 +10,7 @@ function ItemDetails() {
   const [item, setItem] = useState(passedItem || null);
   const [loading, setLoading] = useState(!passedItem);
   const [error, setError] = useState("");
+  const [claimMessage, setClaimMessage] = useState("");
 
   useEffect(() => {
     if (passedItem) {
@@ -42,6 +43,12 @@ function ItemDetails() {
 
     fetchItem();
   }, [id, passedItem]);
+
+  function handleClaimClick() {
+    setClaimMessage(
+      "Claim/contact requests will be connected once the backend claim route is ready. Backend should handle saving and verifying item claims.",
+    );
+  }
 
   if (loading) {
     return (
@@ -188,10 +195,17 @@ function ItemDetails() {
 
             <button
               type="button"
+              onClick={handleClaimClick}
               className="mt-7 w-full rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white transition hover:bg-[#481978] sm:w-auto"
             >
               Claim / Contact About Item
             </button>
+
+            {claimMessage && (
+              <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-700">
+                {claimMessage}
+              </p>
+            )}
           </div>
         </div>
       </div>
