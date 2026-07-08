@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 function ListingCard({ item }) {
   const itemId = item._id || item.id;
   const itemName = item.name || item.title || "Untitled Item";
+
   const postedDate = item.createdAt
     ? new Date(item.createdAt).toLocaleDateString()
     : "Recently posted";
@@ -62,6 +63,7 @@ function ListingCard({ item }) {
         {itemId ? (
           <Link
             to={`/items/${itemId}`}
+            state={{ item }}
             className="mt-auto flex w-full items-center justify-between border-t border-gray-200 pt-4 font-semibold text-[#5F259F]"
           >
             View Details
