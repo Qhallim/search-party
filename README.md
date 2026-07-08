@@ -1,6 +1,6 @@
 ## Frontend Polish / Responsive Branch
 
-### Branch: `frontend-polish-responsive`
+### Branch: `feature/frontend-polish-responsive`
 
 This branch focuses on improving the frontend layout, styling, responsiveness, and basic user interaction across the React app.
 
