@@ -169,7 +169,7 @@ function Home() {
                                 </h3>
 
                                 <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
-                                    Register or sign in to browse the latest lost and found listings
+                                    Register or log in to browse the latest lost and found listings
                                     from the Hunter College community.
                                 </p>
 
