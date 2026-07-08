@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <footer className="bg-[#5F259F] text-white">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-14 md:grid-cols-2">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:py-14 md:grid-cols-[1fr_auto]">
         <div className="max-w-md">
           <div className="flex items-center gap-3">
             <div className="grid h-11 w-11 place-items-center rounded-xl border-2 border-white/70 font-bold">
@@ -18,21 +18,24 @@ function Footer() {
             </div>
           </div>
 
-          <p className="mt-6 leading-7 text-white/70">
+          <p className="mt-6 max-w-xl leading-7 text-white/70">
             A student-focused platform for reporting, finding, and safely
             returning lost belongings across campus.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 md:justify-self-end">
+        <div className="grid grid-cols-2 gap-10 sm:gap-14 md:justify-self-end">
           <div className="flex flex-col gap-3">
             <h3 className="font-bold">Explore</h3>
+
             <Link className="text-sm text-white/70 hover:text-white" to="/">
               Home
             </Link>
+
             <Link className="text-sm text-white/70 hover:text-white" to="/items">
               Browse Items
             </Link>
+
             <Link
               className="text-sm text-white/70 hover:text-white"
               to="/register"
@@ -43,18 +46,21 @@ function Footer() {
 
           <div className="flex flex-col gap-3">
             <h3 className="font-bold">Reports</h3>
+
             <Link
               className="text-sm text-white/70 hover:text-white"
               to="/report-lost"
             >
               Report Lost Item
             </Link>
+
             <Link
               className="text-sm text-white/70 hover:text-white"
               to="/report-found"
             >
               Report Found Item
             </Link>
+
             <Link className="text-sm text-white/70 hover:text-white" to="/login">
               Login
             </Link>
