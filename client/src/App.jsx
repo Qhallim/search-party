@@ -23,7 +23,7 @@ function ScrollToTop() {
 
 function App() {
   return (
-    <BrowserRouter basename="/search-party">
+    <BrowserRouter basename={import.meta.env.VITE_BASE_PATH || "/"}>
       <div
         className="min-h-screen bg-cover bg-center bg-fixed bg-no-repeat text-gray-900"
         style={{ backgroundImage: `url(${backgroundImage})` }}
