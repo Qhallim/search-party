@@ -1,4 +1,4 @@
-import { categories } from "../data/mockListings";
+import { categories } from "../data/categories";
 
 function SearchFilters({
   search,
