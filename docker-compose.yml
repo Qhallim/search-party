@@ -1,0 +1,35 @@
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/search-party
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5001
+        VITE_BASE_PATH: /
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
