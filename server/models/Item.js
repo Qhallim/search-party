@@ -43,6 +43,11 @@ const itemSchema = new mongoose.Schema(
       default: "",
     },
 
+    contact: {
+      type: String,
+      default: "",
+    },
+
     username: {
       type: String,
       required: true,
