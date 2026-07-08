@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ListingCard from "../components/ListingCard";
-import { categories } from "../data/mockListings";
 
 function Home() {
+
+    const user = JSON.parse(localStorage.getItem("user"));
 
     const [recentListings, setRecentListings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,7 +12,7 @@ function Home() {
     useEffect(() => {
         async function fetchItems() {
             try {
-                
+
                 const API_URL = import.meta.env.VITE_API_URL;
                 const res = await fetch(`${API_URL}/api/items`);
 
@@ -31,8 +32,13 @@ function Home() {
             }
         }
 
-        fetchItems();
-    }, []);
+        if (user) {
+            fetchItems();
+        } else {
+            setLoading(false);
+        }
+
+    }, [user]);
 
     return (
         <>
@@ -150,9 +156,39 @@ function Home() {
                     </div>
 
                     {/* Updated DB Cards */}
+
                     <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-                        {loading ? (
+                        {!user ? (
+                            <div className="col-span-full rounded-3xl bg-white p-12 text-center shadow-lg">
+                                <div className="text-6xl">🔒</div>
+
+                                <h3 className="mt-6 text-3xl font-bold">
+                                    See the latest reported items
+                                </h3>
+
+                                <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
+                                    Register or sign in to browse the latest lost and found listings
+                                    from the Hunter College community.
+                                </p>
+
+                                <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+                                    <Link
+                                        to="/register"
+                                        className="rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white transition hover:bg-[#481978]"
+                                    >
+                                        Register
+                                    </Link>
+
+                                    <Link
+                                        to="/login"
+                                        className="rounded-xl border border-[#5F259F] px-6 py-3 font-semibold text-[#5F259F] transition hover:bg-purple-50"
+                                    >
+                                        Login
+                                    </Link>
+                                </div>
+                            </div>
+                        ) : loading ? (
                             <p className="text-gray-500">
                                 Loading listings...
                             </p>
