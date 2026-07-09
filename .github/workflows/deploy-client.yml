@@ -30,6 +30,8 @@ jobs:
       - name: Build
         working-directory: ./client
         run: npm run build
+        env:
+          VITE_BASE_PATH: /search-party/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
