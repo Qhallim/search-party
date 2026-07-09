@@ -4,6 +4,11 @@ import ListingCard from "../components/ListingCard";
 import SearchFilters from "../components/SearchFilters";
 
 function BrowseItems() {
+
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
+
   const [searchParams] = useSearchParams();
 
   const startingCategory = searchParams.get("category") || "All";
@@ -42,8 +47,23 @@ function BrowseItems() {
   }
 
   useEffect(() => {
-    fetchItems();
-  }, []);
+    if(user){
+
+      fetchItems();
+
+    }
+  
+    function updateUser() {
+      const storedUser = localStorage.getItem("user");
+      setUser(storedUser ? JSON.parse(storedUser) : null);
+    }
+  
+    window.addEventListener("userChanged", updateUser);
+  
+    return () => {
+      window.removeEventListener("userChanged", updateUser);
+    };
+  }, [user]);
 
 
   const filteredListings = useMemo(() => {
@@ -81,24 +101,23 @@ function BrowseItems() {
     setStatus("All");
   }
 
-  const user = JSON.parse(localStorage.getItem("user"));
 
-  if(!user){
+  if (!user) {
 
     return (
       <section className="min-h-[70vh] flex items-center justify-center px-5">
         <div className="max-w-lg rounded-3xl bg-white p-10 text-center shadow-lg">
           <div className="text-6xl">🔒</div>
-  
+
           <h1 className="mt-6 text-3xl font-bold">
             Sign in to browse listings
           </h1>
-  
+
           <p className="mt-4 leading-7 text-gray-600">
             To help protect student privacy, only registered users can browse
             lost and found reports. Create an account or sign in to continue.
           </p>
-  
+
           <div className="mt-8 flex justify-center gap-4">
             <Link
               to="/register"
@@ -106,7 +125,7 @@ function BrowseItems() {
             >
               Register
             </Link>
-  
+
             <Link
               to="/login"
               className="rounded-xl border border-[#5F259F] px-6 py-3 font-semibold text-[#5F259F] transition hover:bg-purple-50"

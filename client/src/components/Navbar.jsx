@@ -30,7 +30,7 @@ function Navbar() {
     };
   }, []);
 
-  function logout() {
+  function logout() {``
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChange"));
     setMenuOpen(false);
