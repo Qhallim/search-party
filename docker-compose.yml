@@ -18,6 +18,7 @@ services:
       - MONGO_URI=mongodb://mongo:27017/search-party
     depends_on:
       - mongo
+    image: qhallim/search-party-client:latest
 
   client:
     build:
@@ -30,6 +31,7 @@ services:
       - "3000:80"
     depends_on:
       - server
+    image: qhallim/search-party-server:latest
 
 volumes:
   mongo-data:
