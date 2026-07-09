@@ -16,8 +16,20 @@ router.post("/", async (req, res) => {
 //Getter - Get Items
 router.get("/", async (req, res) => {
   try {
-    const items = await Item.find().sort({ createdAt: -1 });
+    const filter = req.query.username ? { username: req.query.username } : {};
+    const items = await Item.find(filter).sort({ createdAt: -1 });
     res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//Getter - Get single item by id
+router.get("/:id", async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Item not found" });
+    res.json(item);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -47,6 +47,11 @@ const itemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    verificationDetail: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

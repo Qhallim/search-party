@@ -132,7 +132,6 @@ function ReportFound() {
         date: formData.dateFound,
         description: formData.description.trim(),
         verificationDetail: formData.verificationDetail.trim(),
-        privateVerificationDetail: formData.verificationDetail.trim(),
         imageUrl,
         username: currentUser.username || currentUser.email || "unknown",
         userId: currentUser._id || currentUser.id,

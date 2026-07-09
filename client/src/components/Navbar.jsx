@@ -16,6 +16,10 @@ function Navbar() {
 
   const username = user?.username;
 
+  const links = username
+    ? [...navLinks, { label: "My Posts", path: "/my-posts" }]
+    : navLinks;
+
   useEffect(() => {
     function handleUserChange() {
       setUser(JSON.parse(localStorage.getItem("user")));
@@ -66,7 +70,7 @@ function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-2 md:flex">
-          {navLinks.map((link) => (
+          {links.map((link) => (
             <NavLink key={link.path} to={link.path} className={linkClass}>
               {link.label}
             </NavLink>
@@ -119,7 +123,7 @@ function Navbar() {
       {menuOpen && (
         <div className="border-t border-white/15 bg-[#5F259F] px-4 py-4 md:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-2">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}

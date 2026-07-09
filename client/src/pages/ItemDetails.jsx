@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch {
+    return null;
+  }
+}
+
 function ItemDetails() {
   const { id } = useParams();
   const location = useLocation();
@@ -10,7 +18,12 @@ function ItemDetails() {
   const [item, setItem] = useState(passedItem || null);
   const [loading, setLoading] = useState(!passedItem);
   const [error, setError] = useState("");
-  const [claimMessage, setClaimMessage] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [claimError, setClaimError] = useState("");
+  const [claimSuccess, setClaimSuccess] = useState(false);
+  const [submittingClaim, setSubmittingClaim] = useState(false);
+
+  const currentUser = getCurrentUser();
 
   useEffect(() => {
     if (passedItem) {
@@ -44,10 +57,51 @@ function ItemDetails() {
     fetchItem();
   }, [id, passedItem]);
 
-  function handleClaimClick() {
-    setClaimMessage(
-      "Claim/contact requests will be connected once the backend claim route is ready. Backend should handle saving and verifying item claims.",
-    );
+  async function handleClaimSubmit(event) {
+    event.preventDefault();
+
+    setClaimError("");
+
+    if (!currentUser) {
+      setClaimError("Please log in before submitting a claim.");
+      return;
+    }
+
+    if (!answer.trim()) {
+      setClaimError("Please answer the verification question.");
+      return;
+    }
+
+    setSubmittingClaim(true);
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${API_URL}/api/claims`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemId: item._id,
+          claimantUsername: currentUser.username,
+          claimantEmail: currentUser.email,
+          answer: answer.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setClaimError(data.error || "Could not submit your claim.");
+        return;
+      }
+
+      setClaimSuccess(true);
+      setAnswer("");
+    } catch (err) {
+      console.error("Claim submission error:", err);
+      setClaimError("Something went wrong while submitting your claim.");
+    } finally {
+      setSubmittingClaim(false);
+    }
   }
 
   if (loading) {
@@ -188,23 +242,58 @@ function ItemDetails() {
               <h2 className="font-bold text-[#5F259F]">Ownership check</h2>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                The person claiming this item should be able to provide details
-                that were not publicly shown in the listing.
+                {item.verificationDetail ||
+                  "The person claiming this item should be able to provide details that were not publicly shown in the listing."}
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleClaimClick}
-              className="mt-7 w-full rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white transition hover:bg-[#481978] sm:w-auto"
-            >
-              Claim / Contact About Item
-            </button>
-
-            {claimMessage && (
-              <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-700">
-                {claimMessage}
+            {currentUser && currentUser.username === item.username ? (
+              <p className="mt-7 rounded-xl bg-purple-50 px-4 py-3 text-sm font-semibold leading-6 text-[#5F259F]">
+                This is your listing. Review incoming claims from{" "}
+                <Link to="/my-posts" className="underline">
+                  My Posts
+                </Link>
+                .
               </p>
+            ) : claimSuccess ? (
+              <p className="mt-7 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold leading-6 text-emerald-700">
+                Your answer was submitted. Check{" "}
+                <Link to="/my-posts" className="underline">
+                  My Posts
+                </Link>{" "}
+                to see if the poster approves it and releases their contact
+                info.
+              </p>
+            ) : (
+              <form onSubmit={handleClaimSubmit} className="mt-7">
+                <label className="font-semibold">Your answer</label>
+                <textarea
+                  value={answer}
+                  onChange={(event) => setAnswer(event.target.value)}
+                  rows="3"
+                  className="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none transition focus:border-[#5F259F] focus:ring-4 focus:ring-purple-100"
+                  placeholder="Answer the ownership check question above"
+                />
+
+                {claimError && (
+                  <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                    {claimError}{" "}
+                    {claimError.includes("log in") && (
+                      <Link to="/login" className="underline">
+                        Go to login
+                      </Link>
+                    )}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submittingClaim}
+                  className="mt-4 w-full rounded-xl bg-[#5F259F] px-6 py-3 font-semibold text-white transition hover:bg-[#481978] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                >
+                  {submittingClaim ? "Submitting..." : "Claim / Contact About Item"}
+                </button>
+              </form>
             )}
           </div>
         </div>
