@@ -21,6 +21,7 @@ const initialFormData = {
   location: "",
   dateLost: "",
   description: "",
+  verificationDetail: "",
 };
 
 function ReportLost() {
@@ -106,10 +107,11 @@ function ReportLost() {
       !formData.category ||
       !formData.location.trim() ||
       !formData.dateLost ||
-      !formData.description.trim()
+      !formData.description.trim() ||
+      !formData.verificationDetail.trim()
     ) {
       setFormError(
-        "Please fill in the item name, category, location, date, and description.",
+        "Please fill in the item name, category, location, date, description, and verification detail.",
       );
       return;
     }
@@ -129,6 +131,7 @@ function ReportLost() {
         location: formData.location.trim(),
         date: formData.dateLost,
         description: formData.description.trim(),
+        verificationDetail: formData.verificationDetail.trim(),
         imageUrl,
         username: currentUser.username || currentUser.email || "unknown",
         userId: currentUser._id || currentUser.id,
@@ -288,6 +291,25 @@ function ReportLost() {
                 className="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none transition focus:border-[#5F259F] focus:ring-4 focus:ring-purple-100"
                 placeholder="Describe the item, but avoid sharing extremely private information."
               />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="font-semibold">
+                Private verification detail
+              </label>
+              <textarea
+                name="verificationDetail"
+                value={formData.verificationDetail}
+                onChange={handleChange}
+                rows="4"
+                className="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none transition focus:border-[#5F259F] focus:ring-4 focus:ring-purple-100"
+                placeholder="Example: A detail only the true owner would know, like an engraving, a sticker, or what's inside it."
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                This is shown to visitors as a question to answer if they
+                believe they found your item. You'll review their answers
+                before releasing your contact info.
+              </p>
             </div>
 
             <div className="md:col-span-2">

@@ -47,10 +47,15 @@ const itemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    
+
     verificationDetail: {
       type: String,
-      default: "",
+      required: true,
+    },
+
+    resolved: {
+      type: Boolean,
+      default: false,
     },
   },
   {

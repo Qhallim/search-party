@@ -9,6 +9,7 @@ import ReportFound from "./pages/ReportFound";
 import ItemDetails from "./pages/ItemDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import MyPosts from "./pages/MyPosts";
 import backgroundImage from "./assets/background.png";
 
 function ScrollToTop() {
@@ -41,6 +42,7 @@ function App() {
             <Route path="/report-found" element={<ReportFound />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/my-posts" element={<MyPosts />} />
           </Routes>
         </main>
 
