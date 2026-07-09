@@ -5,9 +5,7 @@ import SearchFilters from "../components/SearchFilters";
 
 function BrowseItems() {
 
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [searchParams] = useSearchParams();
 
@@ -21,50 +19,38 @@ function BrowseItems() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function fetchItems() {
-    try {
-      setLoading(true);
-      setError("");
+  useEffect(() => {
 
-
-      const API_URL = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${API_URL}/api/items`);
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch items");
+    async function fetchItems() {
+      try {
+        setError("");
+  
+        const API_URL = import.meta.env.VITE_API_URL;
+        const res = await fetch(`${API_URL}/api/items`);
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch items");
+        }
+  
+        const data = await res.json();
+  
+        setItems(data);
+  
+      } catch (err) {
+        console.error("Error loading items:", err);
+        setError("Unable to load items. Please try again.");
+      } finally {
+        setLoading(false);
       }
-
-      const data = await res.json();
-
-      setItems(data);
-
-    } catch (err) {
-      console.error("Error loading items:", err);
-      setError("Unable to load items. Please try again.");
-    } finally {
-      setLoading(false);
     }
+
+    if (user) {
+      fetchItems();
+  } else {
+      setLoading(false);
   }
 
-  useEffect(() => {
-    if(user){
-
-      fetchItems();
-
-    }
-  
-    function updateUser() {
-      const storedUser = localStorage.getItem("user");
-      setUser(storedUser ? JSON.parse(storedUser) : null);
-    }
-  
-    window.addEventListener("userChange", updateUser);
-  
-    return () => {
-      window.removeEventListener("userChange", updateUser);
-    };
-  }, [user]);
-
+}, [user]);
 
   const filteredListings = useMemo(() => {
     return items.filter((item) => {
