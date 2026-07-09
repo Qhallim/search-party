@@ -21,6 +21,8 @@ function ScrollToTop() {
   return null;
 }
 
+console.log(import.meta.env.VITE_BASE_PATH);
+
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.VITE_BASE_PATH || "/"}>
