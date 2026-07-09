@@ -58,10 +58,10 @@ function BrowseItems() {
       setUser(storedUser ? JSON.parse(storedUser) : null);
     }
   
-    window.addEventListener("userChanged", updateUser);
+    window.addEventListener("userChange", updateUser);
   
     return () => {
-      window.removeEventListener("userChanged", updateUser);
+      window.removeEventListener("userChange", updateUser);
     };
   }, [user]);
 
