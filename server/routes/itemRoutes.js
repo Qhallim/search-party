@@ -24,6 +24,22 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+// Getter - Get all items for speficic user
+router.get("/user/:username", async (req, res) => {
+ 
+  try {
+    const filter = req.params.username ? { username: req.params.username } : {};
+    const items = await Item.find(filter).sort({ createdAt: -1 });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+
+
+});
+
+
 //Getter - Get single item by id
 router.get("/:id", async (req, res) => {
   try {

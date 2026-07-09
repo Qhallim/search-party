@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import ListingCard from "../components/ListingCard";
+import SearchFilters from "../components/SearchFilters";
 
 function getCurrentUser() {
   try {
@@ -17,6 +19,44 @@ function MyPosts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
+  const [items, setItems] = useState([]);
+  
+  const [searchParams] = useSearchParams();
+  
+  const startingCategory = searchParams.get("category") || "All";
+
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState(startingCategory);
+  const [status, setStatus] = useState("All");
+
+
+  async function fetchItems() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${API_URL}/api/items/user/${currentUser.username}`);
+
+
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch items");
+      }
+
+      const data = await res.json();
+
+      setItems(data);
+
+    } catch (err) {
+      console.error("Error loading items:", err);
+      setError("Unable to load items. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
 
   async function loadClaims() {
     if (!currentUser) {
@@ -53,6 +93,7 @@ function MyPosts() {
 
   useEffect(() => {
     loadClaims();
+    fetchItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -111,6 +152,8 @@ function MyPosts() {
           </p>
         </div>
 
+
+
         {loading && <p className="text-gray-600">Loading claims...</p>}
 
         {error && (
@@ -123,6 +166,19 @@ function MyPosts() {
           <p className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {actionError}
           </p>
+        )}
+
+        {!loading && !error && items.length > 0 && (
+          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+            {items.map((item) => (
+              <ListingCard
+                key={item._id}
+                item={item}
+              />
+            ))}
+
+          </div>
         )}
 
         {!loading && (
@@ -148,13 +204,12 @@ function MyPosts() {
                           {claim.item?.name || "Item"}
                         </p>
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
-                            claim.status === "Approved"
+                          className={`rounded-full px-3 py-1 text-xs font-bold ${claim.status === "Approved"
                               ? "bg-emerald-100 text-emerald-700"
                               : claim.status === "Rejected"
                                 ? "bg-red-100 text-red-700"
                                 : "bg-amber-100 text-amber-700"
-                          }`}
+                            }`}
                         >
                           {claim.status}
                         </span>
@@ -213,13 +268,12 @@ function MyPosts() {
                           {claim.item?.name || "Item"}
                         </p>
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
-                            claim.status === "Approved"
+                          className={`rounded-full px-3 py-1 text-xs font-bold ${claim.status === "Approved"
                               ? "bg-emerald-100 text-emerald-700"
                               : claim.status === "Rejected"
                                 ? "bg-red-100 text-red-700"
                                 : "bg-amber-100 text-amber-700"
-                          }`}
+                            }`}
                         >
                           {claim.status}
                         </span>
