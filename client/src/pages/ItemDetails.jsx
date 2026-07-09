@@ -67,6 +67,11 @@ function ItemDetails() {
       return;
     }
 
+    if (item.resolved) {
+      setClaimError("This item has already been claimed.");
+      return;
+    }
+
     if (!answer.trim()) {
       setClaimError("Please answer the verification question.");
       return;
@@ -173,12 +178,14 @@ function ItemDetails() {
 
             <span
               className={`absolute right-4 top-4 rounded-full px-4 py-2 text-xs font-bold sm:right-5 sm:top-5 ${
-                item.status === "Lost"
-                  ? "bg-red-100 text-red-700"
-                  : "bg-emerald-100 text-emerald-700"
+                item.resolved
+                  ? "bg-gray-200 text-gray-700"
+                  : item.status === "Lost"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-emerald-100 text-emerald-700"
               }`}
             >
-              {item.status}
+              {item.resolved ? "Resolved" : item.status}
             </span>
           </div>
 
@@ -263,6 +270,11 @@ function ItemDetails() {
                 </Link>{" "}
                 to see if the poster approves it and releases their contact
                 info.
+              </p>
+            ) : item.resolved ? (
+              <p className="mt-7 rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold leading-6 text-gray-600">
+                This item has already been claimed and is no longer accepting
+                claims.
               </p>
             ) : (
               <form onSubmit={handleClaimSubmit} className="mt-7">

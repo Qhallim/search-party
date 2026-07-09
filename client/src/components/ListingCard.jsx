@@ -8,8 +8,9 @@ function ListingCard({ item }) {
     ? new Date(item.createdAt).toLocaleDateString()
     : "Recently posted";
 
-  const statusStyle =
-    item.status === "Lost"
+  const statusStyle = item.resolved
+    ? "bg-gray-200 text-gray-700"
+    : item.status === "Lost"
       ? "bg-red-100 text-red-700"
       : "bg-emerald-100 text-emerald-700";
 
@@ -31,7 +32,7 @@ function ListingCard({ item }) {
         <span
           className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold ${statusStyle}`}
         >
-          {item.status}
+          {item.resolved ? "Resolved" : item.status}
         </span>
       </div>
 

@@ -17,6 +17,10 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "You cannot claim your own item" });
     }
 
+    if (item.resolved) {
+      return res.status(400).json({ error: "This item has already been claimed" });
+    }
+
     const claim = await Claim.create({
       item: itemId,
       claimantUsername,
@@ -88,6 +92,10 @@ router.patch("/:id", async (req, res) => {
     );
 
     if (!claim) return res.status(404).json({ error: "Claim not found" });
+
+    if (status === "Approved") {
+      await Item.findByIdAndUpdate(claim.item, { resolved: true });
+    }
 
     res.json(claim);
   } catch (err) {
